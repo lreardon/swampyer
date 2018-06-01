@@ -23,7 +23,7 @@ class CellWorld(World):
         self.world_width = world_width
         self.world_length = world_length
         self.canvas_size = canvas_size
-        self.cell_size = cell_size    
+        self.cell_size = cell_size
         self.configuration = configuration
 
         # cells is a map from index tuples to Cell objects
@@ -43,7 +43,7 @@ class CellWorld(World):
                 print('Cell coordinates outside range.')
                 return None
             else:
-                return (i,j)
+                return (i , j)
         if (self.topology == 'rectangle'):
             if ((abs(i) >= self.world_width) or (abs(j) >= self.world_length)):
                 print('Cell coordinates outside range.')
@@ -66,7 +66,7 @@ class CellWorld(World):
 
     def make_canvas(self):
         """Creates the GUI."""
-        self.canvas = self.ca(width=self.canvas_size, 
+        self.canvas = self.ca(width=self.canvas_size,
                               height=self.canvas_size,
                               bg='white',
                               scale = [self.cell_size, self.cell_size])
@@ -111,11 +111,16 @@ class CellWorld(World):
         else:
             self.make_cell(x, y)
 
-    def make_cell(self, i, j, cell=None):
+    def make_cell(self, i, j, cell=None, cell_type='Bool'):
         """Creates and returns a new cell at i,j."""
         i_mod, j_mod = self.top_modulus(i, j)
         if (cell == None):
-            cell = BoolCell(self, i_mod, j_mod)
+            if cell_type == 'Bool':
+                cell = BoolCell(self, i_mod, j_mod)
+            if cell_type == 'Gray':
+                cell = GrayCell(self, i_mod, j_mod)
+            if cell_type == 'Color':
+                cell = ColorCell(self, i_mod, j_mod)
         self.cells[i,j] = cell
         return cell
 
@@ -141,11 +146,11 @@ class CellWorld(World):
     def get_four_neighbors(self, cell, default=None):
         """Return the four Von Neumann neighbors of a cell."""
         return self.get_neighbors(cell, default, CellWorld.four_neighbors)
-        
+
     def get_eight_neighbors(self, cell, default=None):
         """Returns the eight Moore neighbors of a cell."""
         return self.get_neighbors(cell, default, CellWorld.eight_neighbors)
-        
+
     def get_neighbors(self, cell, default=None, deltas=[(0,0)]):
         """Return the neighbors of a cell.
 
@@ -156,7 +161,7 @@ class CellWorld(World):
         i, j = cell.indices
         cells = [self.get_cell(self.top_modulus(i+di, j+dj), default) for di, dj in deltas]
         return cells
-        
+
     def rescale(self):
         """Event handler that rescales the world.
 
@@ -175,7 +180,7 @@ class CellWorld(World):
             cell.draw()
         for animal in self.animals:
             animal.draw()
-            
+
 
 if __name__ == '__main__':
     world = CellWorld(interactive=True)

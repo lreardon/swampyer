@@ -1,7 +1,5 @@
-"""This module is part of Swampy, a suite of programs available from
+"""This module is part of Swampyer, a suite of programs edited by Leland Reardon from the Swampy module, available from
 allendowney.com/swampy.
-
-Copyright 2011 Allen B. Downey
 Distributed under the GNU General Public License at gnu.org/licenses/gpl.html.
 """
 
@@ -10,20 +8,22 @@ from PIL import Image
 from Tkinter import END
 from CellWorld import *
 from World import Animal, Interpreter
+from Animals import *
+from Sensory import *
 from Behaviors import *
 from WorldConfigs import *
 
-class TurmiteWorld(CellWorld):
+class BehaviorWorld(CellWorld):
     """Provides a grid of cells that Turmites occupy."""
 
-    def __init__(self, topology='infinite-plane', world_length=200, world_width=200, cell_size=10, canvas_size=600, default_behavior=collect_dust, configuration=blank_config, name='test', backup=True):
+    def __init__(self, topology='infinite-plane', world_length=200, world_width=200, cell_size=10, canvas_size=600, default_behavior=eat_dust, configuration=fifty_dustmites_random_on_random_shades, name='test', backup=True):
         CellWorld.__init__(self, topology, world_length, world_width, canvas_size, cell_size)
         self.default_behavior = default_behavior
         self.configuration = configuration
         self.name = name
         self.title(self.name)
         self.backup = backup
-        
+
         # the interpreter executes user-provided code
         self.inter = Interpreter(self, globals())
         self.setup()
@@ -65,7 +65,7 @@ class TurmiteWorld(CellWorld):
             print('A simulation by this name already exists. No new directory was created.')
 
     def save(self):
-        file_name = self.name + "_" + str(self.time) + ".eps"
+        file_name = self.name + "-" + str(self.time) + ".eps"
         file_path = self.sim_dir + "/" + file_name
         self.canvas.dump(file_path)
 
@@ -81,7 +81,7 @@ class TurmiteWorld(CellWorld):
 
     def make_turmite(self):
         """Makes a turmite."""
-        turmite = Turmite(self, self.default_behavior)
+        turmite = Turmite(self, behavior=self.default_behavior)
         return turmite
 
     def make_dustmite(self):
@@ -98,53 +98,6 @@ class TurmiteWorld(CellWorld):
         self.animals = []
         self.cells = {}
 
-class Turmite(Animal):
-    """Represents a Turmite (see http://en.wikipedia.org/wiki/Turmite).
-
-    Attributes:
-        dir: direction, one of [0, 1, 2, 3]
-        behavior: a Behavior (see Behaviors.py)
-        pocket: a dictionary of possessions (with multiplicities)
-    """
-    
-    def __init__(self, world, behavior=langton_ant, pocket=dict()):
-        Animal.__init__(self, world)
-        self.dir = 0
-        self.pocket = pocket
-        self.behavior = behavior
-        self.draw()
-
-    def draw(self):
-        """Draw the Turmite."""
-        # get the bounds of the cell
-        cell = self.get_cell()
-        bounds = self.world.cell_bounds(self.x, self.y)
-
-        # draw a triangle inside the cell, pointing in the
-        # appropriate direction
-        bounds = rotate(bounds, self.dir)
-        mid = vmid(bounds[1], bounds[2])
-        self.tag = self.world.canvas.polygon([bounds[0], mid, bounds[3]], fill='red')
-
-    def get_cell(self):
-        #get the cell this turmite is on (creating one if necessary)
-        x, y, world = self.x, self.y, self.world
-        return world.get_cell(x,y) or world.make_cell(x,y) 
-
-    def step(self):
-        self.behavior(self)
-
-
-class Dustmite(Turmite):
-    def __init__(self, world, behavior=collect_dust, pocket=dict(dust=0)):
-        Turmite.__init__(self, world, behavior, pocket)
-
-    def get_dust(self):
-        cell = self.get_cell()
-        shade = cell.shade
-        if (shade > 0):
-            self.pocket['dust'] += 1
-            cell.change_shade(shade - 1)
 
 # the following are some useful vector operations
 
@@ -167,10 +120,9 @@ def rotate(v, n=1):
     n %= len(v)
     return v[n:] + v[:n]
 
+#world = BehaviorWorld('torus', 20, 20, cell_size=8, canvas_size=1000, configuration=ten_dustmites_random_on_random_shades, name='10-mites-random-shades-20x20', backup=True)
+#small_world = BehaviorWorld('torus', 5, 5, cell_size=15, canvas_size=1000, configuration=ten_dustmites_random_on_random_shades, name='10-mites-random-shades-5x5', backup=True)
 
 if __name__ == '__main__':
-    world = TurmiteWorld()
+    world = BehaviorWorld()
     world.mainloop()
-
-world = TurmiteWorld('torus', 50, 50, cell_size=8, canvas_size=1000, configuration=random_shades_config, backup=False)
-t = Dustmite(world, collect_dust)

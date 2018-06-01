@@ -108,7 +108,8 @@ class World(Gui):
     def step(self):
         """Invoke the step method on every animal."""
         for animal in self.animals:
-            animal.step()
+            if animal.alive:
+                animal.step()
         self.time += 1
         
     def run(self):
@@ -116,6 +117,8 @@ class World(Gui):
         self.running = True
         while self.exists and self.running:
             self.step()
+            if self.animals == []:
+                self.running = False
             self.update()
 
     def stop(self):
@@ -200,12 +203,13 @@ class Animal(object):
         x: location in Canvas coordinates
         y: location in Canvas coordinates
     """
-    def __init__(self, world=None):
+    def __init__(self, world=None, x=0, y=0):
+        self.alive = True
+        self.x = x
+        self.y = y
         self.world = world or World.current_world
         if self.world:
             self.world.register(self)
-        self.x = 0
-        self.y = 0
 
     def set_delay(self, delay):
         """Sets delay for this animal's world.
@@ -242,8 +246,8 @@ class Animal(object):
 
     def die(self):
         """Removes the animal from the world and undraws it."""
-        self.world.unregister(self)
-        self.undraw()
+        self.alive = False
+        self.redraw()
 
     def redraw(self):
         """Undraws and then redraws the animal."""

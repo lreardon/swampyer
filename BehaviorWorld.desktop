@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=0.1
+Name=BehaviorWorld
+Comment=Explore the long-term behavior of customizable ecosystems.
+Exec=/home/landho/Desktop/projects/dev/behaviorworld/exec.sh
+Icon=/home/landho/Desktop/projects/dev/behaviorworld/icon.png
+Terminal=false
+Type=Application
+Categories=Utility;Application

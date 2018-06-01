@@ -36,7 +36,7 @@ class Cell(object):
         """Delete any items with this cell's tag."""
         self.item.delete()
         self.item = None
-        
+
     def get_config(self, option):
         """Gets the configuration of this cell."""
         return self.item.cget(option)
@@ -45,12 +45,15 @@ class Cell(object):
         """Configure this cell with the given options."""
         self.item.config(**options)
 
+    def get_neighbors(self):
+        indices = self.indices
+
 
 # BoolCells can either be marked or unmarked.
-class BoolCell(object):
+class BoolCell(Cell):
     """A rectangular region in CellWorld"""
     def __init__(self, world, i, j, marked=False):
-        Cell.__init__(world, i, j)
+        Cell.__init__(self, world, i, j)
         self.marked = marked
 
         # Options configurations, which are chosen depending on marked.
@@ -76,12 +79,12 @@ class BoolCell(object):
         """Marks this cell."""
         self.marked = True
         self.config(**self.marked_options)
-        
+
     def unmark(self):
         """Unmarks this cell."""
         self.marked = False
         self.config(**self.unmarked_options)
-        
+
     def is_marked(self):
         """Checks whether this cell is marked."""
         return self.marked
@@ -99,8 +102,10 @@ class GrayCell(Cell):
     def __init__(self, world, i, j, shade=0):
         Cell.__init__(self, world, i, j)
         self.shade = shade
+        shade_hex_str_full = '0x{:02x}'.format(self.shade)
+        shade_hex_str = shade_hex_str_full[2:]
         # A derived attribute of shade.
-        self.shade_hex = '#' + (str(self.shade)*3)
+        self.shade_hex = '#' + (shade_hex_str*3)
 
         # An options configuration detremined by shade.
         self.shade_options = dict(fill=self.shade_hex, outline='black')
@@ -125,7 +130,9 @@ class GrayCell(Cell):
 
     def change_shade(self, new_shade):
         self.shade = new_shade
-        self.shade_hex = '#' + (str(self.shade)*3)
+        shade_hex_str_full = '0x{:02x}'.format(self.shade)
+        shade_hex_str = shade_hex_str_full[2:]
+        self.shade_hex = '#' + (shade_hex_str*3)
         self.shade_options = dict(fill=self.shade_hex, outline='black')
         self.set_options()
         self.config(**self.options)
