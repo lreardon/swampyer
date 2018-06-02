@@ -50,6 +50,10 @@ class Motion():
 		return (dt_receipt, r_receipt)
 
 #Some Simple Motions
+def stay(animal):
+	m = Motion(0,0,0)
+	return m(animal)
+
 def lt(animal):
 	m = Motion(0,0,1)
 	return m(animal)
