@@ -7,7 +7,7 @@ A new class, 'Behavior' (Behavior.py) allows the user to define arbitrary behavi
 
 To implement Behavior, I created a Motions.py module that can be used to specify arbitrary instantaneous repositionings of an animal. So far, Motions.py been very lightly used, but I believe it offers great expressive potential.
 
-Downey's CellWorld.py module is split in two: CellWorld.py and Cells.py. CellWorld.py retains the CellWorld class, while Cells.py contains a sundry of cell classes, each following a simple format established by an abstract Cell class. For reference, Downey's Cell class is reformulated as BoolCell. Different cell classes can be used to represent the landscape of the world that our animals roam.
+Downey's CellWorld.py module is split in two: CellWorld.py and Cells.py. CellWorld.py retains the CellWorld class, while Cells.py contains a bunch of cell classes, each following a simple format established by an abstract Cell class. For reference, Downey's Cell class is reformulated as BoolCell. Different cell classes can be used to represent the landscape of the world that our animals roam.
 
 As of 1/2/2018, there are only two animals: Turmites and Dustmites. Turmites interact with BoolCells and follow the Langton Ant behavior. They are as implemented by Downey. Dustmites interact with GrayCells and 'eat dust' (check out the code to see what that means!).
 
